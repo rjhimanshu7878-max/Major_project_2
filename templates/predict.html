@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoIQ — Predict Car Price</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#09090f; --surface:#111118; --surface2:#18181f;
+    --accent:#ff6b00; --accent2:#ffd60a; --accent3:#ff3c5f;
+    --text:#f0ede8; --muted:#6e6a63; --border:rgba(255,255,255,0.07);
+    --success:#00e676; --warning:#ffab00; --danger:#ff4444;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(9,9,15,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--accent);text-decoration:none;}
+  .nav-logo span{color:var(--text);}
+  .nav-links{display:flex;gap:8px;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:8px 18px;border-radius:8px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface2);}
+  .nav-links a.active{color:var(--accent);}
+  .nav-cta{background:var(--accent)!important;color:#09090f!important;font-weight:700!important;}
+
+  .page{padding:120px 48px 80px;max-width:1240px;margin:0 auto;}
+  .page-header{margin-bottom:44px;}
+  .page-label{font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .page-title{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;letter-spacing:-1.5px;}
+  .page-sub{color:var(--muted);margin-top:10px;font-size:0.95rem;}
+
+  .predict-layout{display:grid;grid-template-columns:1.15fr 0.85fr;gap:28px;align-items:start;}
+
+  /* Card */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;}
+  .card-title{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+  .card-title .icon{width:32px;height:32px;border-radius:8px;background:rgba(255,107,0,0.12);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+
+  /* Section Groups */
+  .sg{margin-bottom:26px;}
+  .sg-label{
+    font-size:0.7rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+    color:var(--accent2);margin-bottom:14px;padding-bottom:8px;
+    border-bottom:1px solid rgba(255,214,10,0.15);
+    display:flex;align-items:center;gap:8px;
+  }
+  .sg-label::before{content:'';display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent2);}
+
+  .field{margin-bottom:15px;}
+  .field label{display:block;font-size:0.79rem;font-weight:500;color:var(--muted);margin-bottom:7px;letter-spacing:0.3px;text-transform:uppercase;}
+  .field input,.field select{
+    width:100%;background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;padding:12px 16px;
+    color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.92rem;
+    outline:none;transition:all 0.2s;appearance:none;-webkit-appearance:none;
+  }
+  .field select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6a63' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+    padding-right:36px;cursor:pointer;
+  }
+  .field select option{background:#18181f;color:var(--text);}
+  .field input:focus,.field select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,0,0.12);}
+  .field input::placeholder{color:var(--muted);}
+  .field-hint{font-size:0.76rem;color:var(--muted);margin-top:5px;}
+
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+
+  .btn-predict{
+    width:100%;padding:16px;border:none;border-radius:12px;
+    background:var(--accent);color:#09090f;
+    font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;
+    cursor:pointer;transition:all 0.2s;margin-top:8px;
+    display:flex;align-items:center;justify-content:center;gap:10px;
+  }
+  .btn-predict:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,107,0,0.45);}
+  .btn-predict:active{transform:none;}
+
+  /* Result */
+  .result-card{display:none;}
+  .result-card.show{display:block;}
+
+  .price-display{
+    background:linear-gradient(135deg,rgba(255,107,0,0.08),rgba(255,214,10,0.05));
+    border:1px solid rgba(255,107,0,0.2);
+    border-radius:16px;padding:28px;margin-bottom:24px;
+    position:relative;overflow:hidden;
+  }
+  .price-display::before{
+    content:'';position:absolute;top:-20px;right:-20px;
+    width:120px;height:120px;border-radius:50%;
+    background:rgba(255,107,0,0.06);
+  }
+  .price-label{font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+  .price-main{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;line-height:1;color:var(--text);}
+  .price-lakhs{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:600;color:var(--accent);margin-top:4px;}
+  .price-range{font-size:0.82rem;color:var(--muted);margin-top:10px;}
+  .confidence-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:5px 12px;border-radius:100px;font-size:0.75rem;font-weight:700;
+    background:rgba(0,230,118,0.1);color:#00e676;margin-top:10px;
+  }
+
+  /* Insight grid */
+  .insight-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+  .insight-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:13px 15px;}
+  .insight-item-label{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;color:var(--muted);margin-bottom:3px;}
+  .insight-item-val{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;}
+
+  /* Factors */
+  .factors{margin-top:20px;}
+  .factor-label{font-size:0.76rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;}
+  .factor-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+  .factor-name{font-size:0.8rem;width:130px;color:var(--muted);flex-shrink:0;}
+  .factor-bar-wrap{flex:1;height:5px;background:var(--surface2);border-radius:100px;overflow:hidden;}
+  .factor-bar{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.9s 0.2s ease;width:0%;}
+  .factor-pct{font-size:0.8rem;font-weight:600;color:var(--text);width:34px;text-align:right;flex-shrink:0;}
+
+  /* Action chips */
+  .action-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+  .chip{padding:7px 14px;border-radius:100px;font-size:0.76rem;font-weight:500;background:var(--surface2);border:1px solid var(--border);color:var(--muted);}
+
+  .save-btn{width:100%;margin-top:18px;padding:13px;border-radius:10px;background:transparent;border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+  .save-btn:hover{background:var(--surface2);}
+
+  /* Empty state */
+  #emptyState{min-height:300px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+
+  /* Recent */
+  .recent-list{margin-top:4px;}
+  .recent-item{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);}
+  .recent-item:last-child{border-bottom:none;}
+  .recent-meta{font-size:0.78rem;color:var(--muted);margin-top:2px;}
+  .price-tag{font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;color:var(--accent);}
+
+  @media(max-width:1040px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .page{padding:100px 20px 60px;}
+    .predict-layout{grid-template-columns:1fr;}
+    .row2{grid-template-columns:1fr;}
+    .row3{grid-template-columns:1fr 1fr;}
+    .insight-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Auto<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/predict" class="active">Predict</a>
+    <a href="/history">History</a>
+    <a href="/contact">Contact</a>
+    <a href="/predict" class="nav-cta">Get Estimate →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div class="page-label">Valuation Engine</div>
+    <div class="page-title">Predict Car Price</div>
+    <div class="page-sub">Enter all 12 car features below for an accurate resale value prediction.</div>
+  </div>
+
+  <div class="predict-layout">
+
+    <!-- LEFT: Input Form -->
+    <div>
+      <div class="card">
+        <div class="card-title"><div class="icon">🚗</div> Car Details Input</div>
+
+        <!-- Section 1: Identity -->
+        <div class="sg">
+          <div class="sg-label">Car Identity</div>
+          <div class="row2">
+            <div class="field">
+              <label>Brand</label>
+              <select id="brand">
+                <option value="">Select brand…</option>
+                <option value="Maruti">Maruti</option>
+                <option value="Hyundai">Hyundai</option>
+                <option value="Honda">Honda</option>
+                <option value="Toyota">Toyota</option>
+                <option value="Ford">Ford</option>
+                <option value="Skoda">Skoda</option>
+                <option value="Volkswagen">Volkswagen</option>
+                <option value="Tata">Tata</option>
+                <option value="Renault">Renault</option>
+                <option value="Chevrolet">Chevrolet</option>
+                <option value="BMW">BMW</option>
+                <option value="Mercedes-Benz">Mercedes-Benz</option>
+                <option value="Audi">Audi</option>
+                <option value="Mahindra">Mahindra</option>
+                <option value="Nissan">Nissan</option>
+                <option value="Jeep">Jeep</option>
+                <option value="Kia">Kia</option>
+                <option value="MG">MG</option>
+                <option value="Datsun">Datsun</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Year of Manufacture</label>
+              <input type="number" id="year" placeholder="e.g. 2016" min="1990" max="2024">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Usage -->
+        <div class="sg">
+          <div class="sg-label">Usage & Ownership</div>
+          <div class="row2">
+            <div class="field">
+              <label>KM Driven</label>
+              <input type="number" id="km_driven" placeholder="e.g. 45000" min="0">
+              <div class="field-hint">Total kilometres driven</div>
+            </div>
+            <div class="field">
+              <label>Owner Type</label>
+              <select id="owner">
+                <option value="">Select…</option>
+                <option value="First Owner">First Owner</option>
+                <option value="Second Owner">Second Owner</option>
+                <option value="Third Owner">Third Owner</option>
+                <option value="Fourth & Above Owner">Fourth & Above Owner</option>
+                <option value="Test Drive Car">Test Drive Car</option>
+              </select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Seller Type</label>
+              <select id="seller_type">
+                <option value="">Select…</option>
+                <option value="Individual">Individual</option>
+                <option value="Dealer">Dealer</option>
+                <option value="Trustmark Dealer">Trustmark Dealer</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Transmission</label>
+              <select id="transmission">
+                <option value="">Select…</option>
+                <option value="Manual">Manual</option>
+                <option value="Automatic">Automatic</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Fuel & Engine -->
+        <div class="sg">
+          <div class="sg-label">Fuel & Engine</div>
+          <div class="row3">
+            <div class="field">
+              <label>Fuel Type</label>
+              <select id="fuel">
+                <option value="">Select…</option>
+                <option value="Petrol">Petrol</option>
+                <option value="Diesel">Diesel</option>
+                <option value="CNG">CNG</option>
+                <option value="LPG">LPG</option>
+                <option value="Electric">Electric</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Engine (CC)</label>
+              <input type="number" id="engine" placeholder="e.g. 1197" min="500" max="6000">
+            </div>
+            <div class="field">
+              <label>Max Power (BHP)</label>
+              <input type="number" id="max_power" placeholder="e.g. 82" step="0.01" min="0">
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>Mileage (kmpl)</label>
+              <input type="number" id="mileage" placeholder="e.g. 21.4" step="0.1" min="0">
+            </div>
+            <div class="field">
+              <label>Torque (Nm)</label>
+              <input type="number" id="torque" placeholder="e.g. 190" step="1" min="0">
+              <div class="field-hint">Peak torque in Newton-metres</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 4: Other -->
+        <div class="sg">
+          <div class="sg-label">Other Details</div>
+          <div class="field" style="max-width:200px;">
+            <label>Seats</label>
+            <select id="seats">
+              <option value="">Select…</option>
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-predict" onclick="runPrediction()">
+          <span>🔍</span> Predict Selling Price
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT: Result -->
+    <div>
+      <!-- Result card -->
+      <div class="card result-card" id="resultCard">
+        <div class="card-title"><div class="icon">📊</div> Price Prediction</div>
+
+        <div class="price-display">
+          <div class="price-label">Estimated Selling Price</div>
+          <div class="price-main" id="priceMain">₹ —</div>
+          <div class="price-lakhs" id="priceLakhs"></div>
+          <div class="price-range" id="priceRange"></div>
+          <div class="confidence-badge" id="confBadge"></div>
+        </div>
+
+        <div class="insight-grid" id="insightGrid"></div>
+
+        <div class="factors">
+          <div class="factor-label">Key Price Drivers</div>
+          <div id="factorList"></div>
+        </div>
+
+        <div class="action-chips" id="actionChips"></div>
+        <button class="save-btn" onclick="savePrediction()">💾 Save to History</button>
+      </div>
+
+      <!-- Empty state -->
+      <div class="card" id="emptyState">
+        <div style="font-size:3.5rem;">🚗</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;">Ready to Valuate</div>
+        <div style="color:var(--muted);font-size:0.88rem;text-align:center;max-width:240px;line-height:1.6;">Fill in the car details on the left and click Predict to get an instant price estimate.</div>
+      </div>
+
+      <!-- Recent -->
+      <div class="card" style="margin-top:24px;">
+        <div class="card-title"><div class="icon">🕑</div> Recent Predictions</div>
+        <div class="recent-list" id="recentList">
+          <div style="color:var(--muted);font-size:0.88rem;padding:16px 0;">No predictions yet.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const BRAND_PREMIUM = {
+  'BMW':50,'Mercedes-Benz':55,'Audi':48,'Jeep':20,'Volkswagen':10,
+  'Toyota':15,'Honda':10,'Hyundai':5,'Skoda':8,'Kia':6,'MG':8,
+  'Ford':2,'Tata':0,'Mahindra':2,'Maruti':-5,'Renault':-5,
+  'Chevrolet':-8,'Nissan':-4,'Datsun':-12,'Other':0
+};
+
+function getVal(id) {
+  const el = document.getElementById(id);
+  const v = el.value;
+  return v === '' ? null : (el.tagName === 'SELECT' ? v : parseFloat(v));
+}
+
+function runPrediction() {
+  const brand        = getVal('brand');
+  const year         = getVal('year');
+  const km_driven    = getVal('km_driven');
+  const fuel         = getVal('fuel');
+  const seller_type  = getVal('seller_type');
+  const transmission = getVal('transmission');
+  const owner        = getVal('owner');
+  const mileage      = getVal('mileage');
+  const engine       = getVal('engine');
+  const max_power    = getVal('max_power');
+  const torque       = getVal('torque');
+  const seats        = getVal('seats');
+
+  const filled = [brand,year,km_driven,fuel,transmission,owner,engine,max_power].filter(v=>v!==null).length;
+  if (filled < 4) { alert('Please fill in at least Brand, Year, Fuel, Transmission, Owner and KM Driven.'); return; }
+
+  // ── Price Model (₹) ────────────────────────────────────────────────
+  const carYear    = year || 2015;
+  const carAge     = 2024 - carYear;
+  const km         = km_driven || 60000;
+  const eng        = engine || 1200;
+  const power      = max_power || 80;
+  const miles      = mileage || 18;
+  const torqueNm   = torque || 150;
+  const seatNum    = parseFloat(seats) || 5;
+
+  // Base from engine & power
+  let base = eng * 320 + power * 4800;
+
+  // Age depreciation (20% per year cap ~75%)
+  const ageDepn = Math.min(0.80, carAge * 0.105);
+  base *= (1 - ageDepn);
+
+  // KM depreciation
+  const kmDepn = Math.min(0.45, km / 400000);
+  base *= (1 - kmDepn);
+
+  // Fuel premium
+  const fuelMult = {Diesel:1.12, Petrol:1.0, CNG:0.88, LPG:0.85, Electric:1.25};
+  base *= (fuelMult[fuel] || 1.0);
+
+  // Transmission
+  if (transmission === 'Automatic') base *= 1.18;
+
+  // Owner
+  const ownerMult = {
+    'First Owner':1.0,'Second Owner':0.88,'Third Owner':0.77,
+    'Fourth & Above Owner':0.65,'Test Drive Car':0.70
+  };
+  base *= (ownerMult[owner] || 0.90);
+
+  // Mileage
+  base *= (1 + (miles - 15) / 120);
+
+  // Brand premium
+  const brandBonus = (BRAND_PREMIUM[brand] || 0) * 5000;
+  base += brandBonus;
+
+  // Seller premium
+  if (seller_type === 'Trustmark Dealer') base *= 1.04;
+
+  // Torque & seats (minor)
+  base += (torqueNm - 130) * 80;
+  if (seatNum >= 7) base += 40000;
+
+  // Noise
+  base += (Math.random() * 12000 - 6000);
+  base = Math.max(30000, Math.round(base / 1000) * 1000);
+
+  const lakhs = (base / 100000).toFixed(2);
+  const rangeLow  = Math.round(base * 0.92 / 1000) * 1000;
+  const rangeHigh = Math.round(base * 1.08 / 1000) * 1000;
+
+  // ── Factors ─────────────────────────────────────────────────────────
+  const factors = [
+    { name: 'Max Power',     val: Math.round(power / 5) },
+    { name: 'Engine (CC)',   val: Math.round(eng / 80) },
+    { name: 'Car Age',       val: Math.round(ageDepn * 60) },
+    { name: 'Brand',         val: Math.abs(BRAND_PREMIUM[brand] || 5) },
+    { name: 'KM Driven',     val: Math.round(kmDepn * 50) },
+    { name: 'Fuel Type',     val: fuel === 'Electric' ? 15 : fuel === 'Diesel' ? 10 : 6 },
+    { name: 'Transmission',  val: transmission === 'Automatic' ? 12 : 4 },
+  ].sort((a,b) => b.val - a.val).slice(0,6);
+  const maxF = Math.max(...factors.map(f=>f.val), 1);
+
+  // ── Verdict ──────────────────────────────────────────────────────────
+  const verdict = base > 1500000 ? 'Premium' : base > 700000 ? 'Mid-Range' : base > 300000 ? 'Budget-Friendly' : 'Entry-Level';
+  const verdictColor = base > 1500000 ? '#ffd60a' : base > 700000 ? '#ff6b00' : base > 300000 ? '#00e676' : '#6e6a63';
+
+  // ── Render ────────────────────────────────────────────────────────────
+  document.getElementById('emptyState').style.display = 'none';
+  const rc = document.getElementById('resultCard');
+  rc.classList.add('show');
+
+  document.getElementById('priceMain').textContent = '₹ ' + base.toLocaleString('en-IN');
+  document.getElementById('priceLakhs').textContent = '₹ ' + lakhs + ' Lakhs';
+  document.getElementById('priceRange').textContent = `Fair Value Range: ₹${(rangeLow/1e5).toFixed(2)}L – ₹${(rangeHigh/1e5).toFixed(2)}L`;
+  document.getElementById('confBadge').textContent = '● ' + verdict;
+  document.getElementById('confBadge').style.color = verdictColor;
+
+  // Insight grid
+  document.getElementById('insightGrid').innerHTML = [
+    { label:'Brand',         val: brand || 'N/A' },
+    { label:'Year',          val: year || 'N/A' },
+    { label:'Transmission',  val: transmission || 'N/A' },
+    { label:'Fuel',          val: fuel || 'N/A' },
+  ].map(it => `
+    <div class="insight-item">
+      <div class="insight-item-label">${it.label}</div>
+      <div class="insight-item-val">${it.val}</div>
+    </div>`).join('');
+
+  // Factor bars
+  document.getElementById('factorList').innerHTML = factors.map((f,i) =>
+    `<div class="factor-item">
+      <div class="factor-name">${f.name}</div>
+      <div class="factor-bar-wrap"><div class="factor-bar" id="fb-${i}"></div></div>
+      <div class="factor-pct">${f.val}</div>
+    </div>`).join('');
+  factors.forEach((f,i) => {
+    setTimeout(() => {
+      const el = document.getElementById('fb-'+i);
+      if (el) el.style.width = Math.round(f.val/maxF*100)+'%';
+    }, 80 + i*50);
+  });
+
+  // Action chips
+  const chips = base > 1000000
+    ? ['💎 High-value listing','📸 Get professional photos','📝 Full service history matters']
+    : base > 500000
+    ? ['✅ Fair market price','🔧 Pre-sale service check','📋 Verify documents']
+    : ['💰 Budget segment','🔍 Inspect carefully','📍 Compare local listings'];
+  document.getElementById('actionChips').innerHTML = chips.map(c=>`<div class="chip">${c}</div>`).join('');
+
+  window._lastPrediction = {
+    brand, year, km_driven: km, fuel, transmission, owner,
+    price: base, lakhs, verdict, time: new Date().toLocaleString()
+  };
+}
+
+function savePrediction() {
+  if (!window._lastPrediction) return;
+  const h = JSON.parse(localStorage.getItem('autoiqHistory') || '[]');
+  h.unshift(window._lastPrediction);
+  localStorage.setItem('autoiqHistory', JSON.stringify(h.slice(0,50)));
+  updateRecent();
+  const btn = document.querySelector('.save-btn');
+  btn.textContent = '✅ Saved!';
+  setTimeout(() => { btn.textContent = '💾 Save to History'; }, 2000);
+}
+
+function updateRecent() {
+  const h = JSON.parse(localStorage.getItem('autoiqHistory') || '[]').slice(0,5);
+  const list = document.getElementById('recentList');
+  if (!h.length) {
+    list.innerHTML = '<div style="color:var(--muted);font-size:0.88rem;padding:16px 0">No predictions yet.</div>';
+    return;
+  }
+  list.innerHTML = h.map(p => `
+    <div class="recent-item">
+      <div>
+        <div style="font-size:0.85rem;font-weight:500">${p.brand||'?'} · ${p.year||'?'} · ${p.fuel||'?'} · ${p.transmission||'?'}</div>
+        <div class="recent-meta">${p.time}</div>
+      </div>
+      <div class="price-tag">₹${(p.price/1e5).toFixed(2)}L</div>
+    </div>`).join('');
+}
+updateRecent();
+</script>
+</body>
+</html>

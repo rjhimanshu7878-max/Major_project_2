@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoIQ — Contact</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#09090f; --surface:#111118; --surface2:#18181f;
+    --accent:#ff6b00; --accent2:#ffd60a; --accent3:#ff3c5f;
+    --text:#f0ede8; --muted:#6e6a63; --border:rgba(255,255,255,0.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(9,9,15,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--accent);text-decoration:none;}
+  .nav-logo span{color:var(--text);}
+  .nav-links{display:flex;gap:8px;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:8px 18px;border-radius:8px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface2);}
+  .nav-links a.active{color:var(--accent);}
+  .nav-cta{background:var(--accent)!important;color:#09090f!important;font-weight:700!important;}
+
+  .page{padding:120px 48px 80px;max-width:1100px;margin:0 auto;}
+  .page-label{font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .page-title{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;letter-spacing:-1.5px;margin-bottom:10px;}
+  .page-sub{color:var(--muted);font-size:0.95rem;max-width:480px;line-height:1.6;}
+
+  .contact-layout{display:grid;grid-template-columns:1fr 1.3fr;gap:48px;margin-top:52px;align-items:start;}
+
+  /* Info cards */
+  .info-cards{display:flex;flex-direction:column;gap:14px;}
+  .info-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;display:flex;align-items:flex-start;gap:16px;transition:all 0.2s;}
+  .info-card:hover{border-color:rgba(255,107,0,0.2);transform:translateX(4px);}
+  .ic-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+  .ic-1{background:rgba(255,107,0,0.1);}
+  .ic-2{background:rgba(255,214,10,0.1);}
+  .ic-3{background:rgba(255,60,95,0.1);}
+  .ic-4{background:rgba(0,200,83,0.1);}
+  .ic-title{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:4px;}
+  .ic-val{font-size:0.83rem;color:var(--muted);line-height:1.55;}
+  .ic-val a{color:var(--accent);text-decoration:none;}
+
+  .divider{height:1px;background:var(--border);margin:22px 0;}
+  .social-row{display:flex;gap:10px;flex-wrap:wrap;}
+  .social-btn{display:flex;align-items:center;gap:8px;padding:9px 16px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);text-decoration:none;font-size:0.82rem;font-weight:500;transition:all 0.2s;}
+  .social-btn:hover{border-color:rgba(255,107,0,0.3);color:var(--accent);}
+
+  /* Form card */
+  .form-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;}
+  .form-title{font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;margin-bottom:28px;display:flex;align-items:center;gap:10px;}
+  .fi{width:32px;height:32px;border-radius:8px;background:rgba(255,107,0,0.12);display:flex;align-items:center;justify-content:center;}
+
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:0.79rem;font-weight:500;color:var(--muted);margin-bottom:8px;letter-spacing:0.3px;text-transform:uppercase;}
+  .field input,.field select,.field textarea{
+    width:100%;background:var(--surface2);border:1px solid var(--border);
+    border-radius:10px;padding:13px 16px;
+    color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.92rem;
+    outline:none;transition:all 0.2s;resize:vertical;
+  }
+  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,107,0,0.1);}
+  .field input::placeholder,.field textarea::placeholder{color:var(--muted);}
+  .field select{
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236e6a63' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;cursor:pointer;
+  }
+  .field select option{background:#18181f;}
+  .field textarea{min-height:110px;}
+  .field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  .btn-send{width:100%;padding:15px;border:none;border-radius:12px;background:var(--accent);color:#09090f;font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+  .btn-send:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(255,107,0,0.4);}
+
+  .success-msg{display:none;margin-top:16px;padding:14px 18px;border-radius:10px;background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:#00e676;font-size:0.88rem;text-align:center;}
+
+  @media(max-width:900px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .page{padding:100px 20px 60px;}
+    .contact-layout{grid-template-columns:1fr;}
+    .field-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Auto<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/history">History</a>
+    <a href="/contact" class="active">Contact</a>
+    <a href="/predict" class="nav-cta">Get Estimate →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-label">Get In Touch</div>
+  <div class="page-title">Contact Us</div>
+  <div class="page-sub">Have questions about AutoIQ? Want to integrate our pricing model into your platform? We'd love to hear from you.</div>
+
+  <div class="contact-layout">
+    <!-- Info -->
+    <div>
+      <div class="info-cards">
+        <div class="info-card">
+          <div class="ic-icon ic-1">📧</div>
+          <div>
+            <div class="ic-title">Email Us</div>
+            <div class="ic-val"><a href="mailto:shivanshu26022007@gmail.com">shivanshu26022007@gmail.com</a><br>We reply within 24 hours</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-2">💬</div>
+          <div>
+            <div class="ic-title">Live Chat</div>
+            <div class="ic-val">Available Mon–Fri, 9am–6pm IST<br>Avg response time: 5 min</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-3">📍</div>
+          <div>
+            <div class="ic-title">Location</div>
+            <div class="ic-val">Shikohabad, Firozabad, UP, India<br>Remote-friendly team</div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="ic-icon ic-4">🔧</div>
+          <div>
+            <div class="ic-title">API & Integrations</div>
+            <div class="ic-val">Interested in embedding AutoIQ?<br><a href="mailto:shivanshu26022007@gmail.com">shivanshu26022007@gmail.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:14px;">Follow Us</div>
+      <div class="social-row">
+        <a href="https://www.linkedin.com/in/shivanshu2007/" class="social-btn">in LinkedIn</a>
+        <a href="https://github.com/ShivanshuDS" class="social-btn">⌥ GitHub</a>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-card">
+      <div class="form-title"><div class="fi">✉️</div> Send a Message</div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>First Name</label>
+          <input type="text" id="fname" placeholder="Shivanshu">
+        </div>
+        <div class="field">
+          <label>Last Name</label>
+          <input type="text" id="lname" placeholder="Jadon">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" id="email" placeholder="shivanshu26022007@gmail.com">
+      </div>
+
+      <div class="field">
+        <label>Subject</label>
+        <select id="subject">
+          <option value="">Select a topic…</option>
+          <option>General Inquiry</option>
+          <option>Car Valuation Query</option>
+          <option>API / Integration</option>
+          <option>Model Accuracy</option>
+          <option>Bug Report</option>
+          <option>Partnership / Enterprise</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Message</label>
+        <textarea id="message" placeholder="Tell us what's on your mind…"></textarea>
+      </div>
+
+      <button class="btn-send" onclick="sendMessage()">
+        <span>✉️</span> Send Message
+      </button>
+
+      <div class="success-msg" id="successMsg">
+        ✅ Message sent! We'll get back to you within 24 hours.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function sendMessage() {
+  const fname = document.getElementById('fname').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const msg   = document.getElementById('message').value.trim();
+
+  if (!fname || !email || !msg) { alert('Please fill in your name, email, and message.'); return; }
+  if (!email.includes('@')) { alert('Please enter a valid email address.'); return; }
+
+  const btn = document.querySelector('.btn-send');
+  btn.textContent = '⏳ Sending…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    btn.textContent = '✅ Sent!';
+    document.getElementById('successMsg').style.display = 'block';
+    ['fname','lname','email','message'].forEach(id => document.getElementById(id).value = '');
+    document.getElementById('subject').value = '';
+    setTimeout(() => {
+      btn.innerHTML = '<span>✉️</span> Send Message';
+      btn.disabled = false;
+      document.getElementById('successMsg').style.display = 'none';
+    }, 4000);
+  }, 1200);
+}
+</script>
+</body>
+</html>

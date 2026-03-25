@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutoIQ — History</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#09090f; --surface:#111118; --surface2:#18181f;
+    --accent:#ff6b00; --accent2:#ffd60a; --accent3:#ff3c5f;
+    --text:#f0ede8; --muted:#6e6a63; --border:rgba(255,255,255,0.07);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(9,9,15,0.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+  .nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;color:var(--accent);text-decoration:none;}
+  .nav-logo span{color:var(--text);}
+  .nav-links{display:flex;gap:8px;}
+  .nav-links a{color:var(--muted);text-decoration:none;font-size:0.88rem;font-weight:500;padding:8px 18px;border-radius:8px;transition:all 0.2s;}
+  .nav-links a:hover,.nav-links a.active{color:var(--text);background:var(--surface2);}
+  .nav-links a.active{color:var(--accent);}
+  .nav-cta{background:var(--accent)!important;color:#09090f!important;font-weight:700!important;}
+
+  .page{padding:120px 48px 80px;max-width:1200px;margin:0 auto;}
+  .page-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px;}
+  .page-label{font-size:0.75rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:10px;}
+  .page-title{font-family:'Syne',sans-serif;font-size:2.6rem;font-weight:800;letter-spacing:-1.5px;}
+
+  .header-actions{display:flex;gap:12px;}
+  .btn-outline{padding:10px 20px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+  .btn-outline:hover{background:var(--surface2);}
+  .btn-danger{border-color:rgba(255,68,68,0.3);color:#ff4444;}
+  .btn-danger:hover{background:rgba(255,68,68,0.1)!important;}
+
+  /* Summary strip */
+  .summary-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;}
+  .s-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;}
+  .s-num.orange{color:var(--accent);}
+  .s-num.gold{color:var(--accent2);}
+  .s-num.green{color:#00e676;}
+  .s-num.muted{color:var(--muted);}
+  .s-label{font-size:0.78rem;color:var(--muted);margin-top:4px;}
+
+  /* Filter bar */
+  .filter-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .filter-btn{padding:8px 18px;border-radius:100px;border:1px solid var(--border);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+  .filter-btn:hover{background:var(--surface2);color:var(--text);}
+  .filter-btn.active{background:var(--surface2);color:var(--accent);border-color:rgba(255,107,0,0.35);}
+  .search-wrap{margin-left:auto;position:relative;}
+  .search-wrap input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 16px 9px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s;width:220px;}
+  .search-wrap input:focus{border-color:var(--accent);}
+  .search-wrap::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:0.8rem;pointer-events:none;}
+
+  /* Table */
+  .table-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+  table{width:100%;border-collapse:collapse;}
+  thead th{padding:14px 20px;text-align:left;font-size:0.74rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.15s;}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:var(--surface2);}
+  tbody td{padding:14px 20px;font-size:0.87rem;}
+  .td-id{color:var(--muted);font-family:monospace;font-size:0.8rem;}
+  .td-price{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;color:var(--accent);}
+  .badge{padding:4px 10px;border-radius:100px;font-size:0.7rem;font-weight:700;text-transform:uppercase;}
+  .badge-premium{background:rgba(255,214,10,0.12);color:#ffd60a;}
+  .badge-midrange{background:rgba(255,107,0,0.12);color:#ff6b00;}
+  .badge-budget{background:rgba(0,230,118,0.12);color:#00e676;}
+  .badge-entry{background:rgba(110,106,99,0.2);color:#6e6a63;}
+  .del-btn{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;transition:color 0.2s;padding:4px;}
+  .del-btn:hover{color:#ff4444;}
+
+  .empty-state{padding:60px;text-align:center;}
+  .empty-icon{font-size:3rem;margin-bottom:16px;}
+  .empty-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:8px;}
+  .empty-sub{color:var(--muted);font-size:0.88rem;}
+  .empty-link{display:inline-flex;align-items:center;gap:8px;margin-top:20px;padding:11px 22px;border-radius:10px;background:var(--accent);color:#09090f;font-weight:700;font-size:0.88rem;text-decoration:none;}
+
+  @media(max-width:900px){
+    nav{padding:16px 20px;} .nav-links{display:none;}
+    .page{padding:100px 20px 60px;}
+    .summary-strip{grid-template-columns:1fr 1fr;}
+    table thead th:nth-child(4),table tbody td:nth-child(4),
+    table thead th:nth-child(5),table tbody td:nth-child(5){display:none;}
+    .page-header{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">Auto<span>IQ</span></a>
+  <div class="nav-links">
+    <a href="/" class="active">Home</a>
+    <a href="/predict">Predict</a>
+    <a href="/history" class="active">History</a>
+    <a href="/contact">Contact</a>
+    <a href="/predict" class="nav-cta">Get Estimate →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-label">Analytics</div>
+      <div class="page-title">Prediction History</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-outline" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="btn-outline btn-danger" onclick="clearAll()">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <div class="summary-strip">
+    <div class="summary-card"><div class="s-num orange" id="sTotal">0</div><div class="s-label">Total Predictions</div></div>
+    <div class="summary-card"><div class="s-num gold" id="sAvg">—</div><div class="s-label">Avg Predicted Price (L)</div></div>
+    <div class="summary-card"><div class="s-num green" id="sMax">—</div><div class="s-label">Highest Estimate (L)</div></div>
+    <div class="summary-card"><div class="s-num muted" id="sMin">—</div><div class="s-label">Lowest Estimate (L)</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Premium',this)">💎 Premium</button>
+    <button class="filter-btn" onclick="setFilter('Mid-Range',this)">🟠 Mid-Range</button>
+    <button class="filter-btn" onclick="setFilter('Budget-Friendly',this)">🟢 Budget</button>
+    <button class="filter-btn" onclick="setFilter('Entry-Level',this)">⚪ Entry</button>
+    <div class="search-wrap">
+      <input type="text" id="searchBox" placeholder="Search brand, fuel…" oninput="renderTable()">
+    </div>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date & Time</th>
+          <th>Brand / Year</th>
+          <th>Fuel</th>
+          <th>Transmission</th>
+          <th>KM Driven</th>
+          <th>Estimated Price</th>
+          <th>Segment</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="historyBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">No predictions yet</div>
+      <div class="empty-sub">Run your first car price prediction to see it here.</div>
+      <a href="/predict" class="empty-link">🔍 Predict Now</a>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentFilter = 'all';
+
+function setFilter(f,btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function getHistory() {
+  return JSON.parse(localStorage.getItem('autoiqHistory') || '[]');
+}
+
+function segmentClass(v) {
+  if (!v) return 'entry';
+  return v.toLowerCase().replace(/[^a-z]/g,'').replace('friendly','').trim() ||
+    { 'premium':'premium','mid-range':'midrange','budget-friendly':'budget','entry-level':'entry' }[v.toLowerCase()] || 'entry';
+}
+
+function renderTable() {
+  const history = getHistory();
+  const search = document.getElementById('searchBox').value.toLowerCase();
+
+  const filtered = history.filter(p => {
+    const matchF = currentFilter === 'all' || (p.verdict || '') === currentFilter;
+    const matchS = !search ||
+      (p.brand||'').toLowerCase().includes(search) ||
+      (p.fuel||'').toLowerCase().includes(search) ||
+      (p.transmission||'').toLowerCase().includes(search) ||
+      String(p.year||'').includes(search);
+    return matchF && matchS;
+  });
+
+  // Summary stats
+  document.getElementById('sTotal').textContent = history.length;
+  if (history.length) {
+    const prices = history.map(p => p.price || 0);
+    document.getElementById('sAvg').textContent  = (prices.reduce((a,b)=>a+b,0)/prices.length/1e5).toFixed(2)+'L';
+    document.getElementById('sMax').textContent  = (Math.max(...prices)/1e5).toFixed(2)+'L';
+    document.getElementById('sMin').textContent  = (Math.min(...prices)/1e5).toFixed(2)+'L';
+  } else {
+    ['sAvg','sMax','sMin'].forEach(id => document.getElementById(id).textContent = '—');
+  }
+
+  const body = document.getElementById('historyBody');
+  const empty = document.getElementById('emptyState');
+  if (!filtered.length) { body.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display='none';
+
+  const verdictBadge = {
+    'Premium':'badge-premium','Mid-Range':'badge-midrange',
+    'Budget-Friendly':'badge-budget','Entry-Level':'badge-entry'
+  };
+
+  body.innerHTML = filtered.map((p,i) => {
+    const globalIdx = history.indexOf(p);
+    const bc = verdictBadge[p.verdict] || 'badge-entry';
+    return `
+      <tr>
+        <td class="td-id">#${String(globalIdx+1).padStart(3,'0')}</td>
+        <td>${p.time||'—'}</td>
+        <td>${p.brand||'?'} ${p.year||''}</td>
+        <td>${p.fuel||'—'}</td>
+        <td>${p.transmission||'—'}</td>
+        <td>${(p.km_driven||0).toLocaleString('en-IN')} km</td>
+        <td class="td-price">₹ ${(p.price||0).toLocaleString('en-IN')}</td>
+        <td><span class="badge ${bc}">${p.verdict||'—'}</span></td>
+        <td><button class="del-btn" onclick="deleteItem(${globalIdx})">✕</button></td>
+      </tr>`;
+  }).join('');
+}
+
+function deleteItem(idx) {
+  const h = getHistory();
+  h.splice(idx,1);
+  localStorage.setItem('autoiqHistory', JSON.stringify(h));
+  renderTable();
+}
+
+function clearAll() {
+  if (confirm('Clear all prediction history?')) {
+    localStorage.removeItem('autoiqHistory');
+    renderTable();
+  }
+}
+
+function exportCSV() {
+  const h = getHistory();
+  if (!h.length) { alert('No history to export.'); return; }
+  const header = 'ID,Date,Brand,Year,Fuel,Transmission,KM Driven,Price (INR),Price (Lakhs),Segment';
+  const rows = h.map((p,i) =>
+    `${i+1},"${p.time||''}",${p.brand||''},${p.year||''},${p.fuel||''},${p.transmission||''},${p.km_driven||''},${p.price||''},${p.lakhs||''},${p.verdict||''}`
+  );
+  const csv = [header,...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'autoiq_history.csv';
+  a.click();
+}
+
+renderTable();
+</script>
+</body>
+</html>
